@@ -11,10 +11,34 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final player = AudioPlayer();
 
-  Future<void> playSong() async {
-    await player.setAsset('assets/audio/If_I_Dont_Laugh_Ill_Cry.mp3');
+  bool isPlaying = false;
+  bool isLoaded = false;
 
-    player.play();
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> playSong() async {
+    if (!isLoaded) {
+      await player.setAsset('assets/audio/If_I_Dont_Laugh_Ill_Cry.mp3');
+
+      isLoaded = true;
+    }
+
+    if (isPlaying) {
+      setState(() {
+        isPlaying = false;
+      });
+
+      await player.pause();
+    } else {
+      setState(() {
+        isPlaying = true;
+      });
+
+      await player.play();
+    }
   }
 
   @override
@@ -28,7 +52,20 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Auralis')),
       body: Center(
-        child: ElevatedButton(onPressed: playSong, child: const Text('PLAY')),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "isPlaying = $isPlaying",
+              style: const TextStyle(color: Colors.white),
+            ),
+
+            ElevatedButton(
+              onPressed: playSong,
+              child: Text(isPlaying ? 'PAUSE' : 'PLAY'),
+            ),
+          ],
+        ),
       ),
     );
   }
