@@ -1,6 +1,6 @@
 # auralis
 
-A new Flutter project.
+local music player, enough of online music player. I try it with basic dart because I'm still learning.
 
 ## Getting Started
 
