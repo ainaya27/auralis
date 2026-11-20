@@ -29,7 +29,6 @@ class _HomePageState extends State<HomePage> {
   int currentSongIndex = 0;
 
   bool isLoaded = false;
-  bool isChangingSong = false;
 
   Duration currentPosition = Duration.zero;
   Duration totalDuration = Duration.zero;
@@ -48,14 +47,6 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         totalDuration = duration ?? Duration.zero;
       });
-    });
-
-    player.playerStateStream.listen((state) {
-      if (state.processingState == ProcessingState.completed &&
-          !isChangingSong) {
-        debugPrint("Completed -> ${currentSong}");
-        nextSong();
-      }
     });
   }
 
@@ -80,19 +71,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> nextSong() async {
-    debugPrint("From = $currentSongIndex");
-    if (isChangingSong) return;
-
-    isChangingSong = true;
-
     setState(() {
       if (currentSongIndex < songs.length - 1) {
         currentSongIndex++;
       } else {
         currentSongIndex = 0;
       }
-
-      debugPrint("To = $currentSongIndex");
 
       isLoaded = false;
 
@@ -103,16 +87,12 @@ class _HomePageState extends State<HomePage> {
     await player.stop();
 
     await player.setAsset(currentSongPath);
-    debugPrint("Loaded -> $currentSong");
 
     isLoaded = true;
 
     await player.play();
-    debugPrint("Playing -> $currentSong");
 
     setState(() {});
-
-    isChangingSong = false;
   }
 
   Future<void> previousSong() async {
@@ -147,80 +127,261 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final double sliderMax = totalDuration.inSeconds > 0
+        ? totalDuration.inSeconds.toDouble()
+        : 1.0;
+
+    final double sliderValue = currentPosition.inSeconds.toDouble().clamp(
+      0.0,
+      sliderMax,
+    );
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Auralis')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.music_note, size: 140),
-
-            const SizedBox(height: 20),
-
-            Text(
-              currentSong,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-
-            Slider(
-              value: currentPosition.inSeconds.toDouble().clamp(
-                0,
-                totalDuration.inSeconds.toDouble(),
-              ),
-              max: totalDuration.inSeconds > 0
-                  ? totalDuration.inSeconds.toDouble()
-                  : 1,
-              onChanged: (value) {
-                player.seek(Duration(seconds: value.toInt()));
-              },
-            ),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
+      backgroundColor: const Color(0xFF100D1F),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF30205C), Color(0xFF19132D), Color(0xFF100D1F)],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+            child: Column(
               children: [
-                Text(
-                  formatDuration(currentPosition),
-                  style: const TextStyle(color: Colors.white),
+                // Header
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.graphic_eq,
+                      color: Color(0xFFFF8EB4),
+                      size: 30,
+                    ),
+                    const SizedBox(width: 10),
+                    const Text(
+                      'AURALIS',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 4,
+                      ),
+                    ),
+                    const Spacer(),
+                    const Icon(
+                      Icons.headphones_rounded,
+                      color: Color(0xFFB9A7FF),
+                      size: 27,
+                    ),
+                  ],
                 ),
 
-                Text(
-                  formatDuration(totalDuration),
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
+                const SizedBox(height: 36),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  iconSize: 45,
-                  onPressed: previousSong,
-                  icon: const Icon(Icons.skip_previous),
-                ),
-
-                IconButton(
-                  iconSize: 80,
-                  onPressed: playSong,
-                  icon: Icon(
-                    player.playing ? Icons.pause_circle : Icons.play_circle,
+                // Album artwork placeholder
+                Container(
+                  width: 270,
+                  height: 270,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(32),
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFFFFB45F),
+                        Color(0xFFFF78A9),
+                        Color(0xFF9B72F2),
+                        Color(0xFF48318A),
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFB16BFF).withValues(alpha: 0.25),
+                        blurRadius: 35,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 12),
+                      ),
+                    ],
+                  ),
+                  child: const Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Positioned(
+                        top: 24,
+                        right: 25,
+                        child: Icon(
+                          Icons.auto_awesome,
+                          color: Colors.white70,
+                          size: 32,
+                        ),
+                      ),
+                      Icon(
+                        Icons.music_note_rounded,
+                        color: Colors.white,
+                        size: 115,
+                      ),
+                      Positioned(
+                        bottom: 24,
+                        left: 25,
+                        child: Icon(
+                          Icons.circle,
+                          color: Colors.white24,
+                          size: 18,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 
-                IconButton(
-                  iconSize: 45,
-                  onPressed: nextSong,
-                  icon: const Icon(Icons.skip_next),
+                const SizedBox(height: 36),
+
+                // Song information
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'NOW PLAYING',
+                    style: TextStyle(
+                      color: Color(0xFFFFA7C7),
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 3,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        currentSong,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 23,
+                          fontWeight: FontWeight.bold,
+                          height: 1.3,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Icon(
+                      Icons.favorite_rounded,
+                      color: Color(0xFFFF8EB4),
+                      size: 27,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 22),
+
+                // Playback slider
+                SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    activeTrackColor: const Color(0xFFFF8EB4),
+                    inactiveTrackColor: Colors.white24,
+                    thumbColor: const Color(0xFFFFC477),
+                    overlayColor: const Color(0x33FF8EB4),
+                    trackHeight: 4,
+                    thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 6,
+                    ),
+                  ),
+                  child: Slider(
+                    value: sliderValue,
+                    max: sliderMax,
+                    onChanged: (value) {
+                      player.seek(Duration(seconds: value.toInt()));
+                    },
+                  ),
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      formatDuration(currentPosition),
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      formatDuration(totalDuration),
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+
+                // Playback controls
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: previousSong,
+                      icon: const Icon(Icons.skip_previous_rounded),
+                      color: Colors.white,
+                      iconSize: 42,
+                    ),
+
+                    const SizedBox(width: 28),
+
+                    Container(
+                      width: 76,
+                      height: 76,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [Color(0xFFFFB45F), Color(0xFFFF78A9)],
+                        ),
+                      ),
+                      child: IconButton(
+                        onPressed: playSong,
+                        icon: Icon(
+                          player.playing
+                              ? Icons.pause_rounded
+                              : Icons.play_arrow_rounded,
+                          color: const Color(0xFF241438),
+                          size: 45,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 28),
+
+                    IconButton(
+                      onPressed: nextSong,
+                      icon: const Icon(Icons.skip_next_rounded),
+                      color: Colors.white,
+                      iconSize: 42,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 30),
+
+                const Text(
+                  'YOUR MUSIC, YOUR MOMENT',
+                  style: TextStyle(
+                    color: Colors.white38,
+                    fontSize: 10,
+                    letterSpacing: 2.5,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
