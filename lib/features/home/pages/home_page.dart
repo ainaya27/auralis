@@ -137,7 +137,7 @@ class _HomePageState extends State<HomePage> {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFF100D1F),
+      backgroundColor: const Color(0xFF17151F),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -147,136 +147,118 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             child: Column(
               children: [
-                // Header
+                // Top bar
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(
-                      Icons.graphic_eq,
-                      color: Color(0xFFFF8EB4),
-                      size: 30,
-                    ),
-                    const SizedBox(width: 10),
-                    const Text(
-                      'AURALIS',
-                      style: TextStyle(
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.keyboard_arrow_down_rounded,
                         color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 4,
+                        size: 30,
                       ),
                     ),
-                    const Spacer(),
-                    const Icon(
-                      Icons.headphones_rounded,
-                      color: Color(0xFFB9A7FF),
-                      size: 27,
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.more_vert,
+                        color: Colors.white,
+                        size: 26,
+                      ),
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 36),
+                const SizedBox(height: 16),
 
-                // Album artwork placeholder
-                Container(
-                  width: 270,
-                  height: 270,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(32),
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color(0xFFFFB45F),
-                        Color(0xFFFF78A9),
-                        Color(0xFF9B72F2),
-                        Color(0xFF48318A),
-                      ],
+                // Album cover
+                Expanded(
+                  flex: 5,
+                  child: Center(
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          gradient: const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Color(0xFFFFB45F),
+                              Color(0xFFFF78A9),
+                              Color(0xFF9B72F2),
+                              Color(0xFF48318A),
+                            ],
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(
+                                0xFFB16BFF,
+                              ).withValues(alpha: 0.25),
+                              blurRadius: 30,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.music_note_rounded,
+                          color: Colors.white,
+                          size: 110,
+                        ),
+                      ),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFFB16BFF).withValues(alpha: 0.25),
-                        blurRadius: 35,
-                        spreadRadius: 2,
-                        offset: const Offset(0, 12),
-                      ),
-                    ],
-                  ),
-                  child: const Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Positioned(
-                        top: 24,
-                        right: 25,
-                        child: Icon(
-                          Icons.auto_awesome,
-                          color: Colors.white70,
-                          size: 32,
-                        ),
-                      ),
-                      Icon(
-                        Icons.music_note_rounded,
-                        color: Colors.white,
-                        size: 115,
-                      ),
-                      Positioned(
-                        bottom: 24,
-                        left: 25,
-                        child: Icon(
-                          Icons.circle,
-                          color: Colors.white24,
-                          size: 18,
-                        ),
-                      ),
-                    ],
                   ),
                 ),
 
-                const SizedBox(height: 36),
+                const SizedBox(height: 24),
 
                 // Song information
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'NOW PLAYING',
-                    style: TextStyle(
-                      color: Color(0xFFFFA7C7),
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 3,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: Text(
-                        currentSong,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 23,
-                          fontWeight: FontWeight.bold,
-                          height: 1.3,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            currentSong,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          const Text(
+                            'Unknown Artist',
+                            style: TextStyle(
+                              color: Colors.white60,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(width: 12),
-                    const Icon(
-                      Icons.favorite_rounded,
-                      color: Color(0xFFFF8EB4),
-                      size: 27,
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.favorite_border_rounded,
+                        color: Color(0xFFFF8EB4),
+                        size: 30,
+                      ),
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 22),
+                const SizedBox(height: 20),
 
                 // Playback slider
                 SliderTheme(
@@ -285,9 +267,9 @@ class _HomePageState extends State<HomePage> {
                     inactiveTrackColor: Colors.white24,
                     thumbColor: const Color(0xFFFFC477),
                     overlayColor: const Color(0x33FF8EB4),
-                    trackHeight: 4,
+                    trackHeight: 3,
                     thumbShape: const RoundSliderThumbShape(
-                      enabledThumbRadius: 6,
+                      enabledThumbRadius: 5,
                     ),
                   ),
                   child: Slider(
@@ -299,21 +281,22 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
 
+                // Time labels
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       formatDuration(currentPosition),
                       style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
+                        color: Colors.white60,
+                        fontSize: 11,
                       ),
                     ),
                     Text(
                       formatDuration(totalDuration),
                       style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
+                        color: Colors.white60,
+                        fontSize: 11,
                       ),
                     ),
                   ],
@@ -323,25 +306,21 @@ class _HomePageState extends State<HomePage> {
 
                 // Playback controls
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     IconButton(
                       onPressed: previousSong,
                       icon: const Icon(Icons.skip_previous_rounded),
                       color: Colors.white,
-                      iconSize: 42,
+                      iconSize: 38,
                     ),
 
-                    const SizedBox(width: 28),
-
                     Container(
-                      width: 76,
-                      height: 76,
+                      width: 64,
+                      height: 64,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
                           colors: [Color(0xFFFFB45F), Color(0xFFFF78A9)],
                         ),
                       ),
@@ -352,33 +331,21 @@ class _HomePageState extends State<HomePage> {
                               ? Icons.pause_rounded
                               : Icons.play_arrow_rounded,
                           color: const Color(0xFF241438),
-                          size: 45,
+                          size: 40,
                         ),
                       ),
                     ),
-
-                    const SizedBox(width: 28),
 
                     IconButton(
                       onPressed: nextSong,
                       icon: const Icon(Icons.skip_next_rounded),
                       color: Colors.white,
-                      iconSize: 42,
+                      iconSize: 38,
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 30),
-
-                const Text(
-                  'YOUR MUSIC, YOUR MOMENT',
-                  style: TextStyle(
-                    color: Colors.white38,
-                    fontSize: 10,
-                    letterSpacing: 2.5,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
