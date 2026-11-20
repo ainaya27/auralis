@@ -13,18 +13,34 @@ class _HomePageState extends State<HomePage> {
   final List<Map<String, String>> songs = [
     {
       'title': 'If I Don\'t Laugh I\'ll Cry',
+      'artist': 'Laufey',
       'path': 'assets/audio/If_I_Dont_Laugh_Ill_Cry.mp3',
+      'cover': 'assets/images/if_i_dont_laugh_ill_cry.jpeg',
     },
-    {'title': 'One Last Kiss', 'path': 'assets/audio/One_Last_Kiss.mp3'},
-    {'title': 'drop dead', 'path': 'assets/audio/drop_dead.mp3'},
+    {
+      'title': 'One Last Kiss',
+      'artist': 'Hikaru Utada',
+      'path': 'assets/audio/One_Last_Kiss.mp3',
+      'cover': 'assets/images/one_last_kiss.jpeg',
+    },
+    {
+      'title': 'drop dead',
+      'artist': 'Olivia Rodrigo',
+      'path': 'assets/audio/drop_dead.mp3',
+      'cover': 'assets/images/drop_dead.jpeg',
+    },
     {
       'title': 'LOVE LOOKS PRETTY ON YOU',
+      'artist': 'Nessa Barrett',
       'path': 'assets/audio/Love_Looks_Pretty_On_You.mp3',
+      'cover': 'assets/images/love_looks_pretty_on_you.jpeg',
     },
   ];
 
   String get currentSong => songs[currentSongIndex]['title']!;
+  String get currentArtist => songs[currentSongIndex]['artist']!;
   String get currentSongPath => songs[currentSongIndex]['path']!;
+  String get currentCover => songs[currentSongIndex]['cover']!;
 
   int currentSongIndex = 0;
 
@@ -182,40 +198,39 @@ class _HomePageState extends State<HomePage> {
                   child: Center(
                     child: AspectRatio(
                       aspectRatio: 1,
-                      child: Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Color(0xFFFFB45F),
-                              Color(0xFFFF78A9),
-                              Color(0xFF9B72F2),
-                              Color(0xFF48318A),
-                            ],
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(
-                                0xFFB16BFF,
-                              ).withValues(alpha: 0.25),
-                              blurRadius: 30,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.music_note_rounded,
-                          color: Colors.white,
-                          size: 110,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: Image.asset(
+                          currentCover,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xFFFFB45F),
+                                    Color(0xFFFF78A9),
+                                    Color(0xFF9B72F2),
+                                    Color(0xFF48318A),
+                                  ],
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.music_note_rounded,
+                                color: Colors.white,
+                                size: 110,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 24),
 
                 // Song information
@@ -236,8 +251,8 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           const SizedBox(height: 6),
-                          const Text(
-                            'Unknown Artist',
+                          Text(
+                            currentArtist,
                             style: TextStyle(
                               color: Colors.white60,
                               fontSize: 14,
